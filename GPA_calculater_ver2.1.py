@@ -8,6 +8,7 @@ subjects=[]
 open_credit,open_gpa_sum,submit_credit,submit_gpa_sum=0,0,0,0
 n=0
 
+print('<주의사항> 재수강은 두 번 모두 입력하세요.')
 while work==1 or work==2:
     print('작업을 선택하세요.')
     print('  1. 입력')
@@ -19,22 +20,25 @@ while work==1 or work==2:
         user_credit = int(input('학점: '))
         user_grade = input('평점: ')
         user_gpa = convert[user_grade]
-        if subject in subjects:
+        if subject in subjects:    #재수강 여부 
             index=subjects.index(subject)
             saved_gpa=convert[subject_list[index][2]]
             if user_gpa>saved_gpa:
                 saved_data=subject_list.pop(index)
                 saved_code=saved_data[0]
                 saved_credit=saved_data[1]
+                open_credit -= saved_credit
                 open_gpa_sum -= (saved_gpa * saved_credit)
+                open_credit += user_credit
                 open_gpa_sum += (user_gpa * user_credit)
                 if saved_gpa!=0.0:
-                    submit_credit -= user_credit
+                    submit_credit -= saved_credit
                     submit_gpa_sum -= (saved_gpa * saved_credit)
                 if user_grade!='F':
                     submit_credit += user_credit
                     submit_gpa_sum += (user_gpa * user_credit)
                 subject_list.insert(index,(saved_code,user_credit,user_grade))
+            print('재수강 입력되었습니다.')
         else:
             open_credit += user_credit
             open_gpa_sum += (user_gpa * user_credit)
@@ -45,8 +49,8 @@ while work==1 or work==2:
             subject_list.append((code,user_credit,user_grade))
             code+=1
             n+=1
-        subjects=list(dictionary.values())
-        print('입력되었습니다.')
+            subjects=list(dictionary.values())
+            print('입력되었습니다.')
     if work==2:
         for i in range(101,101+n):
             print('[{}] {}학점: {}'.format(dictionary[i],subject_list[i-101][1],subject_list[i-101][2]))
